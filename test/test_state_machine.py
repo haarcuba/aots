@@ -3,11 +3,11 @@ import pytest
 from aots import state_machine
 
 class TestStateMachine:
-    @pytest.fixture
-    def states( self ):
-        STATES = 'Idle', 'Starting', 'Playing', 'Stopping'
-        return [ FakeObject( state ) for state in STATES ]
+    def test_machine_starts_with_initial_state( self ):
+        with Scenario() as scenario:
+            scenario <<\
+                Call( 'Idle' ).returns( FakeObject( 'idle' ) ) <<\
+                Call( 'idle.enter', None, None )
 
-    def test_machine_starts_with_null_state( self, states ):
-        tested = state_machine.StateMachine( states )
-        assert tested.current is None
+            tested = state_machine.StateMachine( FakeObject( 'Idle' ) )
+            assert tested.current is FakeObject( 'idle' )
