@@ -49,3 +49,23 @@ class TestStateMachine:
 
             tested.event( FakeObject( 'someEvent' ) )
             assert tested.current is FakeObject( 'idle' )
+
+    def test_machine_goes_through_some_states( self, idleMachine ):
+        tested = idleMachine
+
+        with Scenario() as scenario:
+            self.switchStateScenario( scenario, 'Idle', FakeObject( 'start' ), 'Starting' )
+            tested.event( FakeObject( 'start' ) )
+            assert tested.current is FakeObject( 'starting' )
+
+            self.switchStateScenario( scenario, 'Starting', FakeObject( 'play' ), 'Playing' )
+            tested.event( FakeObject( 'play' ) )
+            assert tested.current is FakeObject( 'playing' )
+
+            self.switchStateScenario( scenario, 'Playing', FakeObject( 'stop' ), 'Stopping' )
+            tested.event( FakeObject( 'stop' ) )
+            assert tested.current is FakeObject( 'stopping' )
+
+            self.switchStateScenario( scenario, 'Stopping', FakeObject( 'stopped' ), 'Idle' )
+            tested.event( FakeObject( 'stopped' ) )
+            assert tested.current is FakeObject( 'idle' )
