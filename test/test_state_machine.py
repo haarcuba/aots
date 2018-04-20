@@ -12,6 +12,14 @@ class TestStateMachine:
             tested = state_machine.StateMachine( FakeObject( 'Idle' ) )
             assert tested.current is FakeObject( 'idle' )
 
+    def switchStateScenario( self, scenario, currentStateClass, reason, nextStateClass ):
+        currentStateInstance = currentStateClass.lower()
+        nextStateInstance = nextStateClass.lower()
+        scenario <<\
+            Call( '{state}.next'.format( state = currentStateInstance ), reason ).returns( FakeObject( nextStateClass ) ) <<\
+            Call( nextStateClass ).returns( FakeObject( nextStateInstance ) ) <<\
+            Call( '{state}.enter'.format( state = nextStateInstance ), FakeObject( currentStateInstance ), reason )
+
     def test_machine_goes_through_two_states( self ):
         with Scenario() as scenario:
             scenario <<\
@@ -22,12 +30,8 @@ class TestStateMachine:
             assert tested.current is FakeObject( 'idle' )
 
         with Scenario() as scenario:
-            scenario <<\
-                Call( 'idle.next', FakeObject( 'someEvent' ) ).returns( FakeObject( 'Starting' ) ) <<\
-                Call( 'Starting' ).returns( FakeObject( 'starting' ) ) <<\
-                Call( 'starting.enter', FakeObject( 'idle' ), FakeObject( 'someEvent' ) )
-
-            tested.event( FakeObject( 'someEvent' ) )
+            self.switchStateScenario( scenario, 'Idle', FakeObject( 'event' ), 'Starting' )
+            tested.event( FakeObject( 'event' ) )
             assert tested.current is FakeObject( 'starting' )
 
     def test_event_ignored_state_stays_the_same( self ):
