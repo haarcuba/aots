@@ -1,2 +1,7 @@
 class StateMachine:
-    pass
+    def __init__( self, states ):
+        pass
+
+    @property
+    def current( self ):
+        return None

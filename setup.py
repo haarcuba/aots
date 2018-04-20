@@ -5,6 +5,7 @@ README = 'AOTS - Art of the State - a state machine library'
 requires = []
 tests_require = [
         'pytest',
+        'testix',
         ]
 
 setup(name='aots',
